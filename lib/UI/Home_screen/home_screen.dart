@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async'; // Import for Timer
 import 'package:simple/Bloc/demo/demo_bloc.dart';
+import 'package:flutter/services.dart';
 
 import 'package:simple/Reusable/color.dart';
 import 'package:simple/Reusable/image.dart';
 import 'package:simple/Reusable/text_styles.dart';
 import 'package:simple/Reusable/readmore.dart';
 
-import 'package:simple/UI/buttomnavigationbar/buttomnavigation.dart';
 
+import 'package:simple/UI/buttomnavigationbar/buttomnavigation.dart';
+import 'package:simple/UI/contact_screen/contact_screen.dart';
+import 'package:simple/UI/awareness_screen/awareness.dart'; // Import the AwarenessPage
+import 'package:simple/UI/Event_Screen/events.dart';
 // ✅ Smooth page indicator
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -117,14 +121,6 @@ class HomeScreenViewState extends State<HomeScreenView>
     // Add more testimonials if needed
   ];
 
-  // The navItems list is now part of CustomBottomNavigationBar, so it's removed from here.
-  // final List<BottomNavigationBarItem> navItems = const [
-  //   BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-  //   BottomNavigationBarItem(icon: Icon(Icons.event), label: 'Events'),
-  //   BottomNavigationBarItem(icon: Icon(Icons.lightbulb), label: 'Awareness'),
-  //   BottomNavigationBarItem(icon: Icon(Icons.contact_mail), label: 'Contact'),
-  // ];
-
   @override
   void initState() {
     super.initState();
@@ -230,59 +226,88 @@ class HomeScreenViewState extends State<HomeScreenView>
     final Color darkModeBannerColor = _isDarkMode ? Colors.lightBlueAccent : Colors.purple;
 
 
-    return Scaffold(
-      backgroundColor: scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: appBarBackgroundColor,
-        title: Row(
-          children: [
-            Image.asset(Images.logo1, height: 50, width: 50),
-            const SizedBox(width: 10),
-            Text(
-              'PAUL DENTAL CARE',
-              style: TextStyle(
-                fontFamily: 'Times New Roman', // Applied font family
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white, // Use dynamic color
+    return PopScope(
+      canPop: false, // You control pop manually
+      onPopInvoked: (didPop) async {
+        if (!didPop) {
+          bool shouldExit = await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text("Exit App"),
+              content: const Text("Are you sure you want to exit?"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text("No"),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text("Yes"),
+                ),
+              ],
+            ),
+          );
+          if (shouldExit == true) {
+            // Exit the app
+            SystemNavigator.pop();
+          }
+        }
+      },
+      child: Scaffold(
+        backgroundColor: scaffoldBackgroundColor,
+        appBar: AppBar(
+          backgroundColor: appBarBackgroundColor,
+          title: Row(
+            children: [
+              Image.asset(Images.logo1, height: 50, width: 50),
+              const SizedBox(width: 10),
+              Text(
+                'PAUL DENTAL CARE',
+                style: TextStyle(
+                  fontFamily: 'Times New Roman', // Applied font family
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white, // Use dynamic color
+                ),
               ),
+            ],
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(
+                _isDarkMode ? Icons.light_mode : Icons.dark_mode,
+                color: Colors.white, // Always white for visibility
+              ),
+              onPressed: () {
+                setState(() {
+                  _isDarkMode = !_isDarkMode; // Toggle dark mode
+                });
+              },
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              _isDarkMode ? Icons.light_mode : Icons.dark_mode,
-              color: Colors.white, // Always white for visibility
-            ),
-            onPressed: () {
-              setState(() {
-                _isDarkMode = !_isDarkMode; // Toggle dark mode
-              });
-            },
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        // Added empty space after the AppBar
-        child: Column(
+        // >>>>> IMPORTANT CHANGE STARTS HERE <<<<<
+        body: Column( // Removed SingleChildScrollView directly wrapping the Column
           children: [
             const SizedBox(height: 20), // Empty space after AppBar
-            _buildBodyContent(_currentIndex, lightBackground, textColor, secondaryTextColor, cardBackgroundColor, whiteBackground, darkModeBannerColor),
+            Expanded( // Wrapped _buildBodyContent with Expanded
+              child: _buildBodyContent(_currentIndex, lightBackground, textColor, secondaryTextColor, cardBackgroundColor, whiteBackground, darkModeBannerColor),
+            ),
           ],
         ),
-      ),
-      // Use the new CustomBottomNavigationBar widget from the separate file
-      bottomNavigationBar: CustomBottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          // This updates the _currentIndex in the HomeScreenView's state
-          // and will trigger a rebuild, showing the content for the selected tab.
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        isDarkMode: _isDarkMode,
+        // >>>>> IMPORTANT CHANGE ENDS HERE <<<<<
+        // Use the new CustomBottomNavigationBar widget from the separate file
+        bottomNavigationBar: CustomBottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: (index) {
+            // This updates the _currentIndex in the HomeScreenView's state
+            // and will trigger a rebuild, showing the content for the selected tab.
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          isDarkMode: _isDarkMode,
+        ),
       ),
     );
   }
@@ -1287,6 +1312,14 @@ class HomeScreenViewState extends State<HomeScreenView>
       decoration: BoxDecoration(
         color: cardBackgroundColor, // Use dynamic color
         borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 3), // changes position of shadow
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1635,46 +1668,33 @@ class HomeScreenViewState extends State<HomeScreenView>
   Widget _buildBodyContent(int index, Color lightBackground, Color textColor, Color secondaryTextColor, Color cardBackgroundColor, Color whiteBackground, Color darkModeBannerColor) {
     switch (index) {
       case 0:
-        return Column(
-          children: [
-            _buildWelcomeSectionWithCarousel(lightBackground, textColor, secondaryTextColor),
-            const SizedBox(height: 20),
-            _buildTransformingDentalHealthSection(whiteBackground, textColor, secondaryTextColor, darkModeBannerColor),
-            const SizedBox(height: 20),
-            _buildHealthServicesSection(lightBackground, textColor, secondaryTextColor, darkModeBannerColor),
-            const SizedBox(height: 20),
-            _buildOurTeamSection(whiteBackground, textColor, secondaryTextColor, darkModeBannerColor),
-            const SizedBox(height: 20),
-            _buildShareReviewButton(lightBackground, darkModeBannerColor),
-            const SizedBox(height: 20),
-            _buildNewsAndEventsSection(whiteBackground, cardBackgroundColor, textColor, secondaryTextColor, darkModeBannerColor),
-            const SizedBox(height: 20),
-            _buildWhatOurClientsSaySection(lightBackground, whiteBackground, textColor, secondaryTextColor),
-            const SizedBox(height: 20),
-            _buildDetailedClientTestimonialSection(cardBackgroundColor, textColor, secondaryTextColor),
-          ],
+        return SingleChildScrollView( // Added SingleChildScrollView here for the home content
+          child: Column(
+            children: [
+              _buildWelcomeSectionWithCarousel(lightBackground, textColor, secondaryTextColor),
+              const SizedBox(height: 20),
+              _buildTransformingDentalHealthSection(whiteBackground, textColor, secondaryTextColor, darkModeBannerColor),
+              const SizedBox(height: 20),
+              _buildHealthServicesSection(lightBackground, textColor, secondaryTextColor, darkModeBannerColor),
+              const SizedBox(height: 20),
+              _buildOurTeamSection(whiteBackground, textColor, secondaryTextColor, darkModeBannerColor),
+              const SizedBox(height: 20),
+              _buildShareReviewButton(lightBackground, darkModeBannerColor),
+              const SizedBox(height: 20),
+              _buildNewsAndEventsSection(whiteBackground, cardBackgroundColor, textColor, secondaryTextColor, darkModeBannerColor),
+              const SizedBox(height: 20),
+              _buildWhatOurClientsSaySection(lightBackground, whiteBackground, textColor, secondaryTextColor),
+              const SizedBox(height: 20),
+              _buildDetailedClientTestimonialSection(cardBackgroundColor, textColor, secondaryTextColor),
+            ],
+          ),
         );
       case 1:
-        return Center(
-          child: Text(
-            'Upcoming Events will be shown here.',
-            style: AppTextStyle.mediumBlack14.copyWith(color: textColor, fontFamily: 'Times New Roman'),
-          ),
-        );
-      case 2:
-        return Center(
-          child: Text(
-            'Contact Details and Form.',
-            style: AppTextStyle.mediumBlack14.copyWith(color: textColor, fontFamily: 'Times New Roman'),
-          ),
-        );// Calls the new awareness content method
-      case 3:
-        return Center(
-          child: Text(
-            'Contact Details and Form.',
-            style: AppTextStyle.mediumBlack14.copyWith(color: textColor, fontFamily: 'Times New Roman'),
-          ),
-        );
+        return EventsPage(isDarkMode: _isDarkMode);
+      case 2: // Awareness tab
+        return AwarenessPage(isDarkMode: _isDarkMode); // Display the AwarenessPage
+      case 3: // Contact tab
+        return ContactScreen(isDarkMode: _isDarkMode); // Display the ContactScreen
       default:
         return const SizedBox.shrink();
     }
