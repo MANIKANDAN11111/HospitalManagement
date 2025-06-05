@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,51 +13,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       title: 'Awareness Videos',
       debugShowCheckedModeBanner: false,
-      home: MainNavigation(),
-    );
-  }
-}
-
-// ---------------------------------
-// Bottom-navigation shell
-// ---------------------------------
-class MainNavigation extends StatefulWidget {
-  const MainNavigation({super.key});
-
-  @override
-  State<MainNavigation> createState() => _MainNavigationState();
-}
-
-class _MainNavigationState extends State<MainNavigation> {
-  int _currentIndex = 2; // default to Awareness tab
-
-  final List<Widget> _pages = const [
-    _StubPage(label: 'Home'),
-    _StubPage(label: 'Events'),
-    AwarenessPage(),
-    _StubPage(label: 'Contact'),
-  ];
-
-  static const _navItems = [
-    BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-    BottomNavigationBarItem(icon: Icon(Icons.event), label: 'Events'),
-    BottomNavigationBarItem(icon: Icon(Icons.lightbulb), label: 'Awareness'),
-    BottomNavigationBarItem(icon: Icon(Icons.contact_mail), label: 'Contact'),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _pages),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,
-        showUnselectedLabels: true,
-        selectedItemColor: Colors.pink.shade400,
-        unselectedItemColor: Colors.black.withOpacity(.5),
-        items: _navItems,
-        onTap: (i) => setState(() => _currentIndex = i),
-      ),
+      home: AwarenessPage(),
     );
   }
 }
@@ -164,9 +119,8 @@ class _VideoCard extends StatelessWidget {
                   child: Image.network(
                     'https://img.youtube.com/vi/${item.id}/hqdefault.jpg',
                     fit: BoxFit.cover,
-                    loadingBuilder: (_, child, progress) => progress == null
-                        ? child
-                        : const Center(child: CircularProgressIndicator()),
+                    loadingBuilder: (_, child, progress) =>
+                    progress == null ? child : const Center(child: CircularProgressIndicator()),
                   ),
                 ),
               ),
@@ -263,34 +217,4 @@ class _VideoItem {
   final String title;
   final String date;
   const _VideoItem({required this.id, required this.title, required this.date});
-}
-
-class _StubPage extends StatelessWidget {
-  const _StubPage({required this.label});
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text(
-          label,
-          style: const TextStyle(
-            color: Colors.black,
-            fontFamily: 'Times New Roman',
-          ),
-        ),
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
-      body: Center(
-        child: Text(
-          '$label Page',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontFamily: 'Times New Roman',
-          ),
-        ),
-      ),
-    );
-  }
 }
