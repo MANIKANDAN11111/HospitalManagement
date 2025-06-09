@@ -1,5 +1,11 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:simple/Bloc/Response/errorResponse.dart';
+import 'package:simple/ModelClass/Contact/getContactModel.dart';
+import 'package:simple/ModelClass/Events/getEventModel.dart';
+import 'package:simple/Reusable/constant.dart';
 
 /// All API Integration in ApiProvider
 class ApiProvider {
@@ -13,7 +19,62 @@ class ApiProvider {
     _dio = Dio(options);
   }
 
-  /// Register page API Integration
+  /// Contact page API Integration
+  Future<GetContactModel> getContactAPI() async {
+    try {
+      var dio = Dio();
+      var response = await dio.request(
+        '${Constants.baseUrl}contact',
+        options: Options(
+          method: 'GET',
+        ),
+      );
+      if (response.statusCode == 200) {
+        debugPrint("API Response: ${json.encode(response.data)}");
+        GetContactModel getContactResponse =
+            GetContactModel.fromJson(response.data);
+        return getContactResponse;
+      } else {
+        debugPrint(
+            "ErrorAPIResponse: ${response.statusCode} - ${response.statusMessage}");
+        return GetContactModel()
+          ..errorResponse =
+              ErrorResponse(message: "Error: ${response.statusCode}");
+      }
+    } catch (error) {
+      debugPrint("ErrorCatch: $error");
+      GetContactModel getContactResponse = GetContactModel();
+      getContactResponse.errorResponse = handleError(error);
+      return getContactResponse;
+    }
+  }
+
+  /// Event page API Integration
+  Future<GetEventModel> getEventAPI() async {
+    try {
+      var dio = Dio();
+      var response = await dio.request(
+        '${Constants.baseUrl}events',
+        options: Options(
+          method: 'GET',
+        ),
+      );
+      if (response.statusCode == 200) {
+        debugPrint("API Response: ${json.encode(response.data)}");
+        GetEventModel getEventResponse = GetEventModel.fromJson(response.data);
+        return getEventResponse;
+      } else {
+        return GetEventModel()
+          ..errorResponse =
+              ErrorResponse(message: "Error: ${response.statusCode}");
+      }
+    } catch (error) {
+      debugPrint("ErrorCatch: $error");
+      GetEventModel getEventResponse = GetEventModel();
+      getEventResponse.errorResponse = handleError(error);
+      return getEventResponse;
+    }
+  }
 
   /// handle Error Response
   ErrorResponse handleError(Object error) {

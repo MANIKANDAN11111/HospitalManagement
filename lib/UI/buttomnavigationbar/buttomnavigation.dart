@@ -1,6 +1,62 @@
 import 'package:flutter/material.dart';
-// ✅ Reusable resources
 import 'package:simple/Reusable/color.dart';
+import 'package:simple/UI/Event_Screen/events.dart';
+import 'package:simple/UI/Home_screen/home_screen.dart';
+import 'package:simple/UI/awareness_screen/awareness.dart';
+import 'package:simple/UI/contact_screen/contact_screen.dart';
+
+class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  int _currentIndex = 0;
+
+  final List<Widget> _pages = const [
+    HomeScreen(
+      isDarkMode: false,
+    ),
+    EventsPage(
+      isDarkMode: false,
+    ),
+    AwarenessPage(
+      isDarkMode: false,
+    ),
+    ContactScreen(
+      isDarkMode: false,
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    return WillPopScope(
+      onWillPop: () async {
+        if (_currentIndex != 0) {
+          setState(() => _currentIndex = 0);
+          return false;
+        }
+        return true;
+      },
+      child: Scaffold(
+        body: IndexedStack(
+          index: _currentIndex,
+          children: _pages,
+        ),
+        bottomNavigationBar: CustomBottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: (index) => setState(() => _currentIndex = index),
+          isDarkMode: isDarkMode,
+        ),
+      ),
+    );
+  }
+}
+
 class CustomBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
@@ -29,7 +85,8 @@ class CustomBottomNavigationBar extends StatelessWidget {
       unselectedFontSize: 12,
       type: BottomNavigationBarType.fixed,
       selectedItemColor: isDarkMode ? Colors.amber : appPrimaryColor,
-      unselectedItemColor: isDarkMode ? Colors.grey[600] : blackColor.withOpacity(0.5),
+      unselectedItemColor:
+          isDarkMode ? Colors.grey[600] : blackColor.withOpacity(0.5),
       backgroundColor: isDarkMode ? Colors.grey[800] : whiteColor,
       onTap: onTap,
       items: navItems,

@@ -1,69 +1,49 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'dart:async'; // Import for Timer
-import 'package:simple/Bloc/demo/demo_bloc.dart';
 import 'package:flutter/services.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:simple/Bloc/demo/demo_bloc.dart';
 import 'package:simple/Reusable/color.dart';
 import 'package:simple/Reusable/image.dart';
-import 'package:simple/Reusable/text_styles.dart';
 import 'package:simple/Reusable/readmore.dart';
-
-
-import 'package:simple/UI/buttomnavigationbar/buttomnavigation.dart';
-import 'package:simple/UI/contact_screen/contact_screen.dart';
-import 'package:simple/UI/awareness_screen/awareness.dart'; // Import the AwarenessPage
-import 'package:simple/UI/Event_Screen/events.dart';
-// ✅ Smooth page indicator
+import 'package:simple/UI/Home_screen/testimonial.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-
-// Define a data model for testimonials
-class Testimonial {
-  final String clientName;
-  final int stars;
-  final String shortQuote;
-  final String longReview;
-  final String? clientImagePath; // Optional, for the large card
-
-  Testimonial({
-    required this.clientName,
-    required this.stars,
-    this.shortQuote = '',
-    this.longReview = '',
-    this.clientImagePath,
-  });
-}
-
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final bool isDarkMode;
+  const HomeScreen({super.key, required this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
-    // Assuming DemoBloc is needed elsewhere, if not, it can be removed.
-    // For now, I'll keep it as it's part of the original code.
     return BlocProvider(
       create: (_) => DemoBloc(),
-      child: const HomeScreenView(),
+      child: HomeScreenView(
+        isDarkMode: isDarkMode,
+      ),
     );
   }
 }
 
 class HomeScreenView extends StatefulWidget {
-  const HomeScreenView({super.key});
+  final bool isDarkMode;
+  const HomeScreenView({
+    super.key,
+    required this.isDarkMode,
+  });
 
   @override
-  State<HomeScreenView> createState() => HomeScreenViewState();
+  HomeScreenViewState createState() => HomeScreenViewState();
 }
 
-class HomeScreenViewState extends State<HomeScreenView>
-{
-  int _currentIndex = 0;
-  bool _isDarkMode = false;
+class HomeScreenViewState extends State<HomeScreenView> {
+  //PutFeedBackModel putFeedBackModel = PutFeedBackModel();
   final PageController _carouselPageController = PageController(initialPage: 0);
-  final PageController _newsEventsPageController = PageController(initialPage: 0);
-  final PageController _smallTestimonialsPageController = PageController(initialPage: 0);
-  final PageController _largeTestimonialPageController = PageController(initialPage: 0);
+  final PageController _newsEventsPageController =
+      PageController(initialPage: 0);
+  final PageController _smallTestimonialsPageController =
+      PageController(initialPage: 0);
+  final PageController _largeTestimonialPageController =
+      PageController(initialPage: 0);
 
   // Timers for automatic carousel movement
   Timer? _carouselTimer;
@@ -87,13 +67,15 @@ class HomeScreenViewState extends State<HomeScreenView>
       'image': Images.newsEvent1,
       'title': 'Testing',
       'date': '2025-03-20',
-      'description': 'This is a description for the first news event. It provides more details about the testing event that happened on this date.',
+      'description':
+          'This is a description for the first news event. It provides more details about the testing event that happened on this date.',
     },
     {
       'image': Images.newsEvent2,
       'title': 'Testing 2',
       'date': '2025-03-21',
-      'description': 'This is the description for the second news event. It elaborates on the details of Testing 2, providing context and outcomes.',
+      'description':
+          'This is the description for the second news event. It elaborates on the details of Testing 2, providing context and outcomes.',
     },
     // Add more news/event items here as needed
   ];
@@ -103,20 +85,23 @@ class HomeScreenViewState extends State<HomeScreenView>
       clientName: 'Sonia',
       stars: 3,
       shortQuote: '', // No explicit short quote in image for Sonia
-      longReview: 'I was struggling with missing teeth for years, which affected my confidence and ability to eat comfortably. Thanks to the expert care at Paul Dental Care, I got my teeth attached seamlessly. The procedure was smooth, painless, and the results are amazing! Now, I can smile and eat without any worries. Truly life-changing dental care!',
+      longReview:
+          'I was struggling with missing teeth for years, which affected my confidence and ability to eat comfortably. Thanks to the expert care at Paul Dental Care, I got my teeth attached seamlessly. The procedure was smooth, painless, and the results are amazing! Now, I can smile and eat without any worries. Truly life-changing dental care!',
       // clientImagePath: Images.client1, // Assuming a client image for the large card
     ),
     Testimonial(
       clientName: 'Selvam',
       stars: 5,
       shortQuote: '"Best dental clinic"',
-      longReview: 'Best dental clinic. The staff is very friendly and the doctors are highly skilled. I highly recommend Paul Dental Care for all your dental needs.',
+      longReview:
+          'Best dental clinic. The staff is very friendly and the doctors are highly skilled. I highly recommend Paul Dental Care for all your dental needs.',
     ),
     Testimonial(
       clientName: 'இராஜகுமார்', // Rajakumar
       stars: 4,
       shortQuote: '"Doctor interaction and quality of care are good"',
-      longReview: 'Doctor interaction and quality of care are good. The clinic is clean and well-maintained. I had a pleasant experience during my visit.',
+      longReview:
+          'Doctor interaction and quality of care are good. The clinic is clean and well-maintained. I had a pleasant experience during my visit.',
     ),
     // Add more testimonials if needed
   ];
@@ -163,7 +148,8 @@ class HomeScreenViewState extends State<HomeScreenView>
   }
 
   void _startSmallTestimonialsTimer() {
-    _smallTestimonialsTimer = Timer.periodic(const Duration(seconds: 6), (timer) {
+    _smallTestimonialsTimer =
+        Timer.periodic(const Duration(seconds: 6), (timer) {
       if (_smallTestimonialsPageController.hasClients) {
         int nextPage = _smallTestimonialsPageController.page!.toInt() + 1;
         if (nextPage >= testimonials.length) {
@@ -179,7 +165,8 @@ class HomeScreenViewState extends State<HomeScreenView>
   }
 
   void _startLargeTestimonialTimer() {
-    _largeTestimonialTimer = Timer.periodic(const Duration(seconds: 8), (timer) {
+    _largeTestimonialTimer =
+        Timer.periodic(const Duration(seconds: 8), (timer) {
       if (_largeTestimonialPageController.hasClients) {
         int nextPage = _largeTestimonialPageController.page!.toInt() + 1;
         // Assuming the large testimonial carousel only has one item for now,
@@ -212,19 +199,62 @@ class HomeScreenViewState extends State<HomeScreenView>
     super.dispose();
   }
 
+  String? errorMessage;
+  bool feedLoad = false;
+
   @override
   Widget build(BuildContext context) {
+    // var size = MediaQuery.of(context).size;
     // Define colors based on dark mode state
-    final Color scaffoldBackgroundColor = _isDarkMode ? Colors.grey[900]! : whiteColor;
-    final Color appBarBackgroundColor = _isDarkMode ? const Color(0xFF424242) : appPrimaryColor;
-    final Color textColor = _isDarkMode ? Colors.white : Colors.black;
-    final Color secondaryTextColor = _isDarkMode ? Colors.grey[400]! : Colors.grey;
-    final Color cardBackgroundColor = _isDarkMode ? Colors.grey[800]! : const Color(0xFFF8F5FB);
-    final Color lightBackground = _isDarkMode ? Colors.grey[850]! : const Color(0xFFF8F5FB);
-    final Color whiteBackground = _isDarkMode ? Colors.grey[900]! : Colors.white;
+    final Color scaffoldBackgroundColor =
+        widget.isDarkMode ? Colors.grey[900]! : whiteColor;
+    final Color appBarBackgroundColor =
+        widget.isDarkMode ? const Color(0xFF424242) : appPrimaryColor;
+    final Color textColor = widget.isDarkMode ? Colors.white : Colors.black;
+    final Color secondaryTextColor =
+        widget.isDarkMode ? Colors.grey[400]! : Colors.grey;
+    final Color cardBackgroundColor =
+        widget.isDarkMode ? Colors.grey[800]! : const Color(0xFFF8F5FB);
+    final Color lightBackground =
+        widget.isDarkMode ? Colors.grey[850]! : const Color(0xFFF8F5FB);
+    final Color whiteBackground =
+        widget.isDarkMode ? Colors.grey[900]! : Colors.white;
     // Modified: purple elements should appear in lightBlueAccent in dark mode.
-    final Color darkModeBannerColor = _isDarkMode ? Colors.lightBlueAccent : Colors.purple;
+    final Color darkModeBannerColor =
+        widget.isDarkMode ? Colors.lightBlueAccent : Colors.purple;
+    // New combined section for carousel and clinic intro
 
+    Widget mainContainer() {
+      return SingleChildScrollView(
+        // Added SingleChildScrollView here for the home content
+        child: Column(
+          children: [
+            buildWelcomeSectionWithCarousel(
+                lightBackground, textColor, secondaryTextColor),
+            const SizedBox(height: 20),
+            buildTransformingDentalHealthSection(whiteBackground, textColor,
+                secondaryTextColor, darkModeBannerColor),
+            const SizedBox(height: 20),
+            buildHealthServicesSection(lightBackground, textColor,
+                secondaryTextColor, darkModeBannerColor),
+            const SizedBox(height: 20),
+            buildOurTeamSection(whiteBackground, textColor, secondaryTextColor,
+                darkModeBannerColor),
+            const SizedBox(height: 20),
+            buildShareReviewButton(lightBackground, darkModeBannerColor),
+            const SizedBox(height: 20),
+            buildNewsAndEventsSection(whiteBackground, cardBackgroundColor,
+                textColor, secondaryTextColor, darkModeBannerColor),
+            const SizedBox(height: 20),
+            buildWhatOurClientsSaySection(lightBackground, whiteBackground,
+                textColor, secondaryTextColor),
+            const SizedBox(height: 20),
+            buildDetailedClientTestimonialSection(
+                cardBackgroundColor, textColor, secondaryTextColor),
+          ],
+        ),
+      );
+    }
 
     return PopScope(
       canPop: false, // You control pop manually
@@ -254,74 +284,99 @@ class HomeScreenViewState extends State<HomeScreenView>
         }
       },
       child: Scaffold(
-        backgroundColor: scaffoldBackgroundColor,
-        appBar: AppBar(
-          backgroundColor: appBarBackgroundColor,
-          title: Row(
-            children: [
-              Image.asset(Images.logo1, height: 50, width: 50),
-              const SizedBox(width: 10),
-              Text(
-                'PAUL DENTAL CARE',
-                style: TextStyle(
-                  fontFamily: 'Times New Roman', // Applied font family
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white, // Use dynamic color
+          backgroundColor: scaffoldBackgroundColor,
+          appBar: AppBar(
+            backgroundColor: appBarBackgroundColor,
+            title: Row(
+              children: [
+                Image.asset(Images.logo1, height: 50, width: 50),
+                const SizedBox(width: 10),
+                Text(
+                  'PAUL DENTAL CARE',
+                  style: TextStyle(
+                    fontFamily: 'Times New Roman', // Applied font family
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white, // Use dynamic color
+                  ),
                 ),
+              ],
+            ),
+            actions: [
+              IconButton(
+                icon: Icon(
+                  widget.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+                  color: Colors.white, // Always white for visibility
+                ),
+                onPressed: () {
+                  setState(() {
+                    //   widget.isDarkMode = !widget.isDarkMode; // Toggle dark mode
+                  });
+                },
               ),
             ],
           ),
-          actions: [
-            IconButton(
-              icon: Icon(
-                _isDarkMode ? Icons.light_mode : Icons.dark_mode,
-                color: Colors.white, // Always white for visibility
-              ),
-              onPressed: () {
-                setState(() {
-                  _isDarkMode = !_isDarkMode; // Toggle dark mode
-                });
-              },
-            ),
-          ],
-        ),
-        // >>>>> IMPORTANT CHANGE STARTS HERE <<<<<
-        body: Column( // Removed SingleChildScrollView directly wrapping the Column
-          children: [
-            const SizedBox(height: 20), // Empty space after AppBar
-            Expanded( // Wrapped _buildBodyContent with Expanded
-              child: _buildBodyContent(_currentIndex, lightBackground, textColor, secondaryTextColor, cardBackgroundColor, whiteBackground, darkModeBannerColor),
-            ),
-          ],
-        ),
-        // >>>>> IMPORTANT CHANGE ENDS HERE <<<<<
-        // Use the new CustomBottomNavigationBar widget from the separate file
-        bottomNavigationBar: CustomBottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            // This updates the _currentIndex in the HomeScreenView's state
-            // and will trigger a rebuild, showing the content for the selected tab.
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          isDarkMode: _isDarkMode,
-        ),
-      ),
+          body: BlocBuilder<DemoBloc, dynamic>(
+            buildWhen: ((previous, current) {
+              debugPrint("current:$current");
+              // if (current is PutFeedBackModel) {
+              //   putFeedBackModel = current;
+              //   if (current.errorResponse != null) {
+              //     if (current.errorResponse!.errors != null &&
+              //         current.errorResponse!.errors!.isNotEmpty) {
+              //       errorMessage = current.errorResponse!.errors![0].message ??
+              //           "Something went wrong";
+              //     } else {
+              //       errorMessage = "Something went wrong";
+              //     }
+              //     showToast("$errorMessage", context, color: false);
+              //     setState(() {
+              //       feedLoad = false;
+              //     });
+              //   } else if (putFeedBackModel.success == true) {
+              //     if (putFeedBackModel.data?.status == true) {
+              //       debugPrint("putFeedBackModel:${putFeedBackModel.message}");
+              //       setState(() {
+              //         showToast("${putFeedBackModel.message}", context,
+              //             color: true);
+              //         feedLoad = false;
+              //       });
+              //       Navigator.of(context).pushReplacement(MaterialPageRoute(
+              //           builder: (context) => const DashboardScreen(
+              //             selectTab: 3,
+              //           )));
+              //     } else if (putFeedBackModel.data?.status == false) {
+              //       debugPrint("putFeedBackModel:${putFeedBackModel.message}");
+              //       setState(() {
+              //         showToast("${putFeedBackModel.message}", context,
+              //             color: false);
+              //         feedLoad = false;
+              //       });
+              //     }
+              //   }
+              //   return true;
+              // }
+              return false;
+            }),
+            builder: (context, dynamic) {
+              return mainContainer();
+            },
+          )),
     );
   }
 
-  // New combined section for carousel and clinic intro
-  Widget _buildWelcomeSectionWithCarousel(Color backgroundColor, Color textColor, Color secondaryTextColor) {
+  Widget buildWelcomeSectionWithCarousel(
+      Color backgroundColor, Color textColor, Color secondaryTextColor) {
     // darkModeBannerColor is not directly passed here, but it's available in the class scope.
     // Ensure all references to Colors.purple are replaced with darkModeBannerColor
-    final Color dynamicPurple = _isDarkMode ? Colors.lightBlueAccent : Colors.purple;
+    final Color dynamicPurple =
+        widget.isDarkMode ? Colors.lightBlueAccent : Colors.purple;
 
     return Column(
       children: [
         // Carousel part
-        Container( // Added Container to set background color for the carousel area
+        Container(
+          // Added Container to set background color for the carousel area
           color: backgroundColor, // Set background color to match clinic intro
           child: Column(
             children: [
@@ -345,12 +400,32 @@ class HomeScreenViewState extends State<HomeScreenView>
                               height: 180,
                               color: Colors.grey[300],
                               child: const Center(
-                                child: Text('Image not found', style: TextStyle(color: Colors.black54)),
+                                child: Text('Image not found',
+                                    style: TextStyle(color: Colors.black54)),
                               ),
                             );
                           },
                         ),
                       ),
+                      // CachedNetworkImage(
+                      //   imageUrl:
+                      //   "${getUserDetailsModel.data!.userDetails!.imageUrl}",
+                      //   width: 100,
+                      //   height: 100,
+                      //   fit: BoxFit.cover,
+                      //   errorWidget: (context, url, error) {
+                      //     return const Icon(
+                      //       Icons.error,
+                      //       size: 30,
+                      //       color: appHomeTextColor,
+                      //     );
+                      //   },
+                      //   progressIndicatorBuilder:
+                      //       (context, url, downloadProgress) =>
+                      //   const SpinKitCircle(
+                      //       color: appPrimaryColor,
+                      //       size: 30),
+                      // )
                     );
                   },
                 ),
@@ -362,10 +437,13 @@ class HomeScreenViewState extends State<HomeScreenView>
                 effect: WormEffect(
                   dotHeight: 8,
                   dotWidth: 8,
-                  activeDotColor: _isDarkMode ? Colors.amber : appPrimaryColor, // Adjust dot color
+                  activeDotColor: widget.isDarkMode
+                      ? Colors.amber
+                      : appPrimaryColor, // Adjust dot color
                 ),
               ),
-              const SizedBox(height: 20), // Spacing between carousel and intro text
+              const SizedBox(
+                  height: 20), // Spacing between carousel and intro text
             ],
           ),
         ),
@@ -382,14 +460,16 @@ class HomeScreenViewState extends State<HomeScreenView>
                   Container(
                     width: 40,
                     height: 2,
-                    color: dynamicPurple, // Changed from hardcoded Colors.purple
+                    color:
+                        dynamicPurple, // Changed from hardcoded Colors.purple
                     margin: const EdgeInsets.only(right: 8.0),
                   ),
                   Text(
                     'We are Here',
                     style: TextStyle(
                       fontFamily: 'Times New Roman', // Applied font family
-                      color: dynamicPurple, // Changed from hardcoded Colors.purple
+                      color:
+                          dynamicPurple, // Changed from hardcoded Colors.purple
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -420,8 +500,10 @@ class HomeScreenViewState extends State<HomeScreenView>
                               Text(
                                 'Welcome to our clinic, where your smile is our priority! Our experienced team is dedicated to providing gentle, high-quality dental care in a comfortable and friendly environment. Whether you\'re here for a routine check-up, cosmetic enhancement, or specialized treatment, we ensure a personalized experience that keeps your oral health at its best. Step in and let us brighten your smile today!',
                                 style: TextStyle(
-                                  fontFamily: 'Times New Roman', // Applied font family
-                                  color: secondaryTextColor, // Use dynamic color
+                                  fontFamily:
+                                      'Times New Roman', // Applied font family
+                                  color:
+                                      secondaryTextColor, // Use dynamic color
                                   fontSize: 16,
                                   height: 1.5,
                                 ),
@@ -437,8 +519,10 @@ class HomeScreenViewState extends State<HomeScreenView>
                               Text(
                                 'We are committed to delivering exceptional dental care with a focus on comfort and patient satisfaction. Our state-of-the-art facility, combined with a compassionate team, ensures a stress-free and pleasant experience for every visit. Whether you need preventive care, restorative treatment, or a confidence-boosting smile makeover, we’re here to help you achieve optimal oral health.',
                                 style: TextStyle(
-                                  fontFamily: 'Times New Roman', // Applied font family
-                                  color: secondaryTextColor, // Use dynamic color
+                                  fontFamily:
+                                      'Times New Roman', // Applied font family
+                                  color:
+                                      secondaryTextColor, // Use dynamic color
                                   fontSize: 16,
                                   height: 1.5,
                                 ),
@@ -455,7 +539,8 @@ class HomeScreenViewState extends State<HomeScreenView>
                         Text(
                           'Welcome to our clinic, where your smile is our priority! Our experienced team is dedicated to providing gentle, high-quality dental care in a comfortable and friendly environment. Whether you\'re here for a routine check-up, cosmetic enhancement, or specialized treatment, we ensure a personalized experience that keeps your oral health at its best. Step in and let us brighten your smile today!',
                           style: TextStyle(
-                            fontFamily: 'Times New Roman', // Applied font family
+                            fontFamily:
+                                'Times New Roman', // Applied font family
                             color: secondaryTextColor, // Use dynamic color
                             fontSize: 16,
                             height: 1.5,
@@ -465,7 +550,8 @@ class HomeScreenViewState extends State<HomeScreenView>
                         Text(
                           'We are committed to delivering exceptional dental care with a focus on comfort and patient satisfaction. Our state-of-the-art facility, combined with a compassionate team, ensures a stress-free and pleasant experience for every visit. Whether you need preventive care, restorative treatment, or a confidence-boosting smile makeover, we’re here to help you achieve optimal oral health.',
                           style: TextStyle(
-                            fontFamily: 'Times New Roman', // Applied font family
+                            fontFamily:
+                                'Times New Roman', // Applied font family
                             color: secondaryTextColor, // Use dynamic color
                             fontSize: 16,
                             height: 1.5,
@@ -483,7 +569,8 @@ class HomeScreenViewState extends State<HomeScreenView>
     );
   }
 
-  Widget _buildTransformingDentalHealthSection(Color backgroundColor, Color textColor, Color secondaryTextColor, Color purpleColor) {
+  Widget buildTransformingDentalHealthSection(Color backgroundColor,
+      Color textColor, Color secondaryTextColor, Color purpleColor) {
     return Container(
       padding: const EdgeInsets.all(32.0),
       color: backgroundColor, // Use dynamic color
@@ -545,9 +632,11 @@ class HomeScreenViewState extends State<HomeScreenView>
                     Expanded(
                       flex: 2, // Image takes more space
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12), // Rounded corners for image
+                        borderRadius: BorderRadius.circular(
+                            12), // Rounded corners for image
                         child: Image.asset(
-                          Images.dentalClinicImage, // Updated to use the new image name
+                          Images
+                              .dentalClinicImage, // Updated to use the new image name
                           fit: BoxFit.cover,
                           height: 250, // Fixed height for the image
                           // Add error handling for image loading if needed
@@ -556,24 +645,35 @@ class HomeScreenViewState extends State<HomeScreenView>
                               height: 250,
                               color: Colors.grey[300],
                               child: const Center(
-                                child: Text('Image not found', style: TextStyle(color: Colors.black54)),
+                                child: Text('Image not found',
+                                    style: TextStyle(color: Colors.black54)),
                               ),
                             );
                           },
                         ),
                       ),
                     ),
-                    const SizedBox(width: 32), // Spacing between image and stats
+                    const SizedBox(
+                        width: 32), // Spacing between image and stats
                     Expanded(
                       flex: 1, // Stats take less space
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildStatCard('21', 'Daily appointments',
-                              'We are dedicated to providing personalized dental care every day. With flexible appointment scheduling and expert consultations, we ensure you receive the best treatment at your convenience. Book your appointment today and take the first first step towards a healthier, brighter smile', textColor, secondaryTextColor), // Pass colors
-                          const SizedBox(height: 24), // Spacing between stat cards
-                          _buildStatCard('563', 'Happy Clients',
-                              'Join our growing family of happy patients! With thousands of smiles transformed, our clinic takes pride in delivering exceptional dental care that builds confidence and well-being. Be a part of our success story-your perfect smile is just an appointment away', textColor, secondaryTextColor), // Pass colors
+                          buildStatCard(
+                              '21',
+                              'Daily appointments',
+                              'We are dedicated to providing personalized dental care every day. With flexible appointment scheduling and expert consultations, we ensure you receive the best treatment at your convenience. Book your appointment today and take the first first step towards a healthier, brighter smile',
+                              textColor,
+                              secondaryTextColor), // Pass colors
+                          const SizedBox(
+                              height: 24), // Spacing between stat cards
+                          buildStatCard(
+                              '563',
+                              'Happy Clients',
+                              'Join our growing family of happy patients! With thousands of smiles transformed, our clinic takes pride in delivering exceptional dental care that builds confidence and well-being. Be a part of our success story-your perfect smile is just an appointment away',
+                              textColor,
+                              secondaryTextColor), // Pass colors
                         ],
                       ),
                     ),
@@ -587,7 +687,8 @@ class HomeScreenViewState extends State<HomeScreenView>
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: Image.asset(
-                        Images.dentalClinicImage, // Updated to use the new image name
+                        Images
+                            .dentalClinicImage, // Updated to use the new image name
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: 200, // Adjust height for mobile
@@ -596,18 +697,27 @@ class HomeScreenViewState extends State<HomeScreenView>
                             height: 200,
                             color: Colors.grey[300],
                             child: const Center(
-                              child: Text('Image not found', style: TextStyle(color: Colors.black54)),
+                              child: Text('Image not found',
+                                  style: TextStyle(color: Colors.black54)),
                             ),
                           );
                         },
                       ),
                     ),
                     const SizedBox(height: 32),
-                    _buildStatCard('21', 'Daily appointments',
-                        'We are dedicated to providing personalized dental care every day. With flexible appointment scheduling and expert consultations, we ensure you receive the best treatment at your convenience. Book your appointment today and take the first step towards a healthier, brighter smile', textColor, secondaryTextColor), // Pass colors
+                    buildStatCard(
+                        '21',
+                        'Daily appointments',
+                        'We are dedicated to providing personalized dental care every day. With flexible appointment scheduling and expert consultations, we ensure you receive the best treatment at your convenience. Book your appointment today and take the first step towards a healthier, brighter smile',
+                        textColor,
+                        secondaryTextColor), // Pass colors
                     const SizedBox(height: 24),
-                    _buildStatCard('563', 'Happy Clients',
-                        'Join our growing family of happy patients! With thousands of smiles transformed, our clinic takes pride in delivering exceptional dental care that builds confidence and well-being. Be a part of our success story-your perfect smile is just an appointment away', textColor, secondaryTextColor), // Pass colors
+                    buildStatCard(
+                        '563',
+                        'Happy Clients',
+                        'Join our growing family of happy patients! With thousands of smiles transformed, our clinic takes pride in delivering exceptional dental care that builds confidence and well-being. Be a part of our success story-your perfect smile is just an appointment away',
+                        textColor,
+                        secondaryTextColor), // Pass colors
                   ],
                 );
               }
@@ -619,7 +729,8 @@ class HomeScreenViewState extends State<HomeScreenView>
   }
 
   // Reverted to simple Text widget, removing AnimatedCounter
-  Widget _buildStatCard(String number, String title, String description, Color textColor, Color secondaryTextColor) {
+  Widget buildStatCard(String number, String title, String description,
+      Color textColor, Color secondaryTextColor) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -656,9 +767,10 @@ class HomeScreenViewState extends State<HomeScreenView>
     );
   }
 
-  Widget _buildHealthServicesSection(Color backgroundColor, Color textColor, Color secondaryTextColor, Color purpleColor) {
-
-    final Color dynamicPurple = _isDarkMode ? Colors.lightBlueAccent : Colors.purple;
+  Widget buildHealthServicesSection(Color backgroundColor, Color textColor,
+      Color secondaryTextColor, Color purpleColor) {
+    final Color dynamicPurple =
+        widget.isDarkMode ? Colors.lightBlueAccent : Colors.purple;
 
     return Container(
       color: backgroundColor, // Use dynamic color
@@ -680,14 +792,17 @@ class HomeScreenViewState extends State<HomeScreenView>
                           Container(
                             width: 40,
                             height: 2,
-                            color: dynamicPurple, // Changed from hardcoded Colors.purple
+                            color:
+                                dynamicPurple, // Changed from hardcoded Colors.purple
                             margin: const EdgeInsets.only(right: 8.0),
                           ),
                           Text(
                             'We care your smile',
                             style: TextStyle(
-                              fontFamily: 'Times New Roman', // Applied font family
-                              color: dynamicPurple, // Changed from hardcoded Colors.purple
+                              fontFamily:
+                                  'Times New Roman', // Applied font family
+                              color:
+                                  dynamicPurple, // Changed from hardcoded Colors.purple
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
@@ -707,10 +822,14 @@ class HomeScreenViewState extends State<HomeScreenView>
                       ),
                       const SizedBox(height: 24),
                       // List of services
-                      _buildServiceItem('Family & general dentistry', secondaryTextColor, purpleColor), // Pass color
-                      _buildServiceItem('Implant dentistry', secondaryTextColor, purpleColor), // Pass color
-                      _buildServiceItem('Cosmetic dentistry', secondaryTextColor, purpleColor), // Pass color
-                      _buildServiceItem('Using Best Quality tools.', secondaryTextColor, purpleColor), // Pass color
+                      buildServiceItem('Family & general dentistry',
+                          secondaryTextColor, purpleColor), // Pass color
+                      buildServiceItem('Implant dentistry', secondaryTextColor,
+                          purpleColor), // Pass color
+                      buildServiceItem('Cosmetic dentistry', secondaryTextColor,
+                          purpleColor), // Pass color
+                      buildServiceItem('Using Best Quality tools.',
+                          secondaryTextColor, purpleColor), // Pass color
                       const SizedBox(height: 32),
                       // Read More Button
                       ElevatedButton(
@@ -719,8 +838,10 @@ class HomeScreenViewState extends State<HomeScreenView>
                           ReadMore();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: purpleColor, // Purple button color, now dynamic
-                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                          backgroundColor:
+                              purpleColor, // Purple button color, now dynamic
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 40, vertical: 15),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -728,7 +849,8 @@ class HomeScreenViewState extends State<HomeScreenView>
                         child: const Text(
                           'Read More',
                           style: TextStyle(
-                            fontFamily: 'Times New Roman', // Applied font family
+                            fontFamily:
+                                'Times New Roman', // Applied font family
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -742,7 +864,8 @@ class HomeScreenViewState extends State<HomeScreenView>
                 Expanded(
                   flex: 2, // Image takes more space
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12), // Rounded corners for image
+                    borderRadius:
+                        BorderRadius.circular(12), // Rounded corners for image
                     child: Image.asset(
                       Images.healthServicesImage, // Placeholder for your image
                       fit: BoxFit.cover,
@@ -752,7 +875,8 @@ class HomeScreenViewState extends State<HomeScreenView>
                           height: 350,
                           color: Colors.grey[300],
                           child: const Center(
-                            child: Text('Image not found', style: TextStyle(color: Colors.black54)),
+                            child: Text('Image not found',
+                                style: TextStyle(color: Colors.black54)),
                           ),
                         );
                       },
@@ -772,14 +896,16 @@ class HomeScreenViewState extends State<HomeScreenView>
                     Container(
                       width: 40,
                       height: 2,
-                      color: dynamicPurple, // Changed from hardcoded Colors.purple
+                      color:
+                          dynamicPurple, // Changed from hardcoded Colors.purple
                       margin: const EdgeInsets.only(right: 8.0),
                     ),
                     Text(
                       'We care your smile',
                       style: TextStyle(
                         fontFamily: 'Times New Roman', // Applied font family
-                        color: dynamicPurple, // Changed from hardcoded Colors.purple
+                        color:
+                            dynamicPurple, // Changed from hardcoded Colors.purple
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -799,10 +925,14 @@ class HomeScreenViewState extends State<HomeScreenView>
                 ),
                 const SizedBox(height: 24),
                 // List of services
-                _buildServiceItem('Family & general dentistry', secondaryTextColor, purpleColor), // Pass color
-                _buildServiceItem('Implant dentistry', secondaryTextColor, purpleColor), // Pass color
-                _buildServiceItem('Cosmetic dentistry', secondaryTextColor, purpleColor), // Pass color
-                _buildServiceItem('Using Best Quality tools.', secondaryTextColor, purpleColor), // Pass color
+                buildServiceItem('Family & general dentistry',
+                    secondaryTextColor, purpleColor), // Pass color
+                buildServiceItem('Implant dentistry', secondaryTextColor,
+                    purpleColor), // Pass color
+                buildServiceItem('Cosmetic dentistry', secondaryTextColor,
+                    purpleColor), // Pass color
+                buildServiceItem('Using Best Quality tools.',
+                    secondaryTextColor, purpleColor), // Pass color
                 const SizedBox(height: 32),
                 // Image for smaller screens
                 ClipRRect(
@@ -817,22 +947,26 @@ class HomeScreenViewState extends State<HomeScreenView>
                         height: 250,
                         color: Colors.grey[300],
                         child: const Center(
-                          child: Text('Image not found', style: TextStyle(color: Colors.black54)),
+                          child: Text('Image not found',
+                              style: TextStyle(color: Colors.black54)),
                         ),
                       );
                     },
                   ),
                 ),
                 const SizedBox(height: 32),
-                Center( // Center the button on small screens
+                Center(
+                  // Center the button on small screens
                   child: ElevatedButton(
                     onPressed: () {
                       // Handle Read More button press
                       ReadMore();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: purpleColor, // Purple button color, now dynamic
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                      backgroundColor:
+                          purpleColor, // Purple button color, now dynamic
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -856,13 +990,14 @@ class HomeScreenViewState extends State<HomeScreenView>
     );
   }
 
-  Widget _buildServiceItem(String text, Color textColor, Color iconColor) {
+  Widget buildServiceItem(String text, Color textColor, Color iconColor) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.check_circle, color: iconColor, size: 20), // Purple checkmark icon, now dynamic
+          Icon(Icons.check_circle,
+              color: iconColor, size: 20), // Purple checkmark icon, now dynamic
           const SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -880,7 +1015,8 @@ class HomeScreenViewState extends State<HomeScreenView>
     );
   }
 
-  Widget _buildOurTeamSection(Color backgroundColor, Color textColor, Color secondaryTextColor, Color purpleColor) {
+  Widget buildOurTeamSection(Color backgroundColor, Color textColor,
+      Color secondaryTextColor, Color purpleColor) {
     return Container(
       color: backgroundColor, // Use dynamic color
       padding: const EdgeInsets.all(32.0),
@@ -941,11 +1077,29 @@ class HomeScreenViewState extends State<HomeScreenView>
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Expanded(child: _buildDoctorCard(Images.drPaulRaj, 'Dr Paul Raj', 'BDS Implantologist', textColor, secondaryTextColor)), // Pass colors
+                    Expanded(
+                        child: buildDoctorCard(
+                            Images.drPaulRaj,
+                            'Dr Paul Raj',
+                            'BDS Implantologist',
+                            textColor,
+                            secondaryTextColor)), // Pass colors
                     const SizedBox(width: 20),
-                    Expanded(child: _buildDoctorCard(Images.drBalaKrishnan, 'Dr Bala Krishnan', 'MDS Oral Maxilo Facial Surgery', textColor, secondaryTextColor)), // Pass colors
+                    Expanded(
+                        child: buildDoctorCard(
+                            Images.drBalaKrishnan,
+                            'Dr Bala Krishnan',
+                            'MDS Oral Maxilo Facial Surgery',
+                            textColor,
+                            secondaryTextColor)), // Pass colors
                     const SizedBox(width: 20),
-                    Expanded(child: _buildDoctorCard(Images.drJenarthan, 'Dr Jenarthan', 'MDS Paedodontist', textColor, secondaryTextColor)), // Pass colors
+                    Expanded(
+                        child: buildDoctorCard(
+                            Images.drJenarthan,
+                            'Dr Jenarthan',
+                            'MDS Paedodontist',
+                            textColor,
+                            secondaryTextColor)), // Pass colors
                   ],
                 );
               } else if (constraints.maxWidth > 400) {
@@ -955,25 +1109,56 @@ class HomeScreenViewState extends State<HomeScreenView>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Expanded(child: _buildDoctorCard(Images.drPaulRaj, 'Dr Paul Raj', 'BDS Implantologist', textColor, secondaryTextColor)), // Pass colors
+                        Expanded(
+                            child: buildDoctorCard(
+                                Images.drPaulRaj,
+                                'Dr Paul Raj',
+                                'BDS Implantologist',
+                                textColor,
+                                secondaryTextColor)), // Pass colors
                         const SizedBox(width: 20),
-                        Expanded(child: _buildDoctorCard(Images.drBalaKrishnan, 'Dr Bala Krishnan', 'MDS Oral Maxilo Facial Surgery', textColor, secondaryTextColor)), // Pass colors
+                        Expanded(
+                            child: buildDoctorCard(
+                                Images.drBalaKrishnan,
+                                'Dr Bala Krishnan',
+                                'MDS Oral Maxilo Facial Surgery',
+                                textColor,
+                                secondaryTextColor)), // Pass colors
                       ],
                     ),
                     const SizedBox(height: 20),
-                    _buildDoctorCard(Images.drJenarthan, 'Dr Jenarthan', 'MDS Paedodontist', textColor, secondaryTextColor), // Pass colors
+                    buildDoctorCard(
+                        Images.drJenarthan,
+                        'Dr Jenarthan',
+                        'MDS Paedodontist',
+                        textColor,
+                        secondaryTextColor), // Pass colors
                   ],
                 );
-              }
-              else {
+              } else {
                 // Single column for small screens
                 return Column(
                   children: [
-                    _buildDoctorCard(Images.drPaulRaj, 'Dr Paul Raj', 'BDS Implantologist', textColor, secondaryTextColor), // Pass colors
+                    buildDoctorCard(
+                        Images.drPaulRaj,
+                        'Dr Paul Raj',
+                        'BDS Implantologist',
+                        textColor,
+                        secondaryTextColor), // Pass colors
                     const SizedBox(height: 20),
-                    _buildDoctorCard(Images.drBalaKrishnan, 'Dr Bala Krishnan', 'MDS Oral Maxilo Facial Surgery', textColor, secondaryTextColor), // Pass colors
+                    buildDoctorCard(
+                        Images.drBalaKrishnan,
+                        'Dr Bala Krishnan',
+                        'MDS Oral Maxilo Facial Surgery',
+                        textColor,
+                        secondaryTextColor), // Pass colors
                     const SizedBox(height: 20),
-                    _buildDoctorCard(Images.drJenarthan, 'Dr Jenarthan', 'MDS Paedodontist', textColor, secondaryTextColor), // Pass colors
+                    buildDoctorCard(
+                        Images.drJenarthan,
+                        'Dr Jenarthan',
+                        'MDS Paedodontist',
+                        textColor,
+                        secondaryTextColor), // Pass colors
                   ],
                 );
               }
@@ -984,11 +1169,13 @@ class HomeScreenViewState extends State<HomeScreenView>
     );
   }
 
-  Widget _buildDoctorCard(String imagePath, String name, String specialization, Color textColor, Color secondaryTextColor) {
+  Widget buildDoctorCard(String imagePath, String name, String specialization,
+      Color textColor, Color secondaryTextColor) {
     return Column(
       children: [
         ClipRRect(
-          borderRadius: BorderRadius.circular(12), // Rounded corners for doctor images
+          borderRadius:
+              BorderRadius.circular(12), // Rounded corners for doctor images
           child: Image.asset(
             imagePath,
             fit: BoxFit.cover,
@@ -999,7 +1186,8 @@ class HomeScreenViewState extends State<HomeScreenView>
                 height: 200,
                 color: Colors.grey[300],
                 child: const Center(
-                  child: Text('Image not found', style: TextStyle(color: Colors.black54)),
+                  child: Text('Image not found',
+                      style: TextStyle(color: Colors.black54)),
                 ),
               );
             },
@@ -1030,12 +1218,12 @@ class HomeScreenViewState extends State<HomeScreenView>
     );
   }
 
-  Widget _buildShareReviewButton(Color dialogFieldFillColor, Color purpleColor) {
+  Widget buildShareReviewButton(Color dialogFieldFillColor, Color purpleColor) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32.0),
       child: ElevatedButton(
         onPressed: () {
-          _showReviewDialog(context, dialogFieldFillColor, purpleColor);
+          showReviewDialog(context, dialogFieldFillColor, purpleColor);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: purpleColor, // Purple button color, now dynamic
@@ -1043,7 +1231,8 @@ class HomeScreenViewState extends State<HomeScreenView>
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
-          minimumSize: const Size(double.infinity, 50), // Make button full width
+          minimumSize:
+              const Size(double.infinity, 50), // Make button full width
         ),
         child: const Text(
           'Share Review',
@@ -1058,11 +1247,15 @@ class HomeScreenViewState extends State<HomeScreenView>
     );
   }
 
-  void _showReviewDialog(BuildContext context, Color dialogFieldFillColor, Color purpleColor) {
+  void showReviewDialog(
+      BuildContext context, Color dialogFieldFillColor, Color purpleColor) {
     // Define colors for the dialog based on dark mode state
-    final Color dialogBackgroundColor = _isDarkMode ? Colors.grey[800]! : Colors.white;
-    final Color dialogTextColor = _isDarkMode ? Colors.white : Colors.black;
-    final Color dialogLabelColor = _isDarkMode ? Colors.grey[400]! : Colors.grey;
+    final Color dialogBackgroundColor =
+        widget.isDarkMode ? Colors.grey[800]! : Colors.white;
+    final Color dialogTextColor =
+        widget.isDarkMode ? Colors.white : Colors.black;
+    final Color dialogLabelColor =
+        widget.isDarkMode ? Colors.grey[400]! : Colors.grey;
 
     // A GlobalKey to manage the form state for validation
     final _formKey = GlobalKey<FormState>();
@@ -1081,9 +1274,11 @@ class HomeScreenViewState extends State<HomeScreenView>
               backgroundColor: dialogBackgroundColor, // Use dynamic color
               content: SingleChildScrollView(
                 child: Container(
-                  width: MediaQuery.of(context).size.width * 0.9, // 90% of screen width
+                  width: MediaQuery.of(context).size.width *
+                      0.9, // 90% of screen width
                   padding: const EdgeInsets.all(24.0),
-                  child: Form( // Wrap with Form for validation
+                  child: Form(
+                    // Wrap with Form for validation
                     key: _formKey,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -1092,7 +1287,8 @@ class HomeScreenViewState extends State<HomeScreenView>
                         Align(
                           alignment: Alignment.topRight,
                           child: IconButton(
-                            icon: Icon(Icons.cancel, color: dialogLabelColor), // Use dynamic color
+                            icon: Icon(Icons.cancel,
+                                color: dialogLabelColor), // Use dynamic color
                             onPressed: () {
                               Navigator.of(context).pop(); // Close the dialog
                             },
@@ -1101,7 +1297,8 @@ class HomeScreenViewState extends State<HomeScreenView>
                         Text(
                           'Share Review',
                           style: TextStyle(
-                            fontFamily: 'Times New Roman', // Applied font family
+                            fontFamily:
+                                'Times New Roman', // Applied font family
                             color: dialogTextColor, // Use dynamic color
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -1111,19 +1308,27 @@ class HomeScreenViewState extends State<HomeScreenView>
                         // Full Name Text Field
                         TextFormField(
                           controller: _fullNameController,
-                          style: TextStyle(fontFamily: 'Times New Roman', color: dialogTextColor), // Text color in field
+                          style: TextStyle(
+                              fontFamily: 'Times New Roman',
+                              color: dialogTextColor), // Text color in field
                           decoration: InputDecoration(
                             labelText: 'Full Name*',
-                            labelStyle: TextStyle(fontFamily: 'Times New Roman', color: dialogLabelColor), // Use dynamic color
+                            labelStyle: TextStyle(
+                                fontFamily: 'Times New Roman',
+                                color: dialogLabelColor), // Use dynamic color
                             filled: true,
-                            fillColor: dialogFieldFillColor, // Use dynamic color
+                            fillColor:
+                                dialogFieldFillColor, // Use dynamic color
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                               borderSide: BorderSide.none, // No border
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: purpleColor, width: 2), // Purple border on focus, now dynamic
+                              borderSide: BorderSide(
+                                  color: purpleColor,
+                                  width:
+                                      2), // Purple border on focus, now dynamic
                             ),
                           ),
                           validator: (value) {
@@ -1136,7 +1341,8 @@ class HomeScreenViewState extends State<HomeScreenView>
                         const SizedBox(height: 16),
                         // Star Rating Dropdown
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
                             color: dialogFieldFillColor, // Use dynamic color
                             borderRadius: BorderRadius.circular(8),
@@ -1145,10 +1351,12 @@ class HomeScreenViewState extends State<HomeScreenView>
                             child: DropdownButton<int>(
                               value: _selectedStars,
                               isExpanded: true,
-                              icon: Icon(Icons.keyboard_arrow_down, color: dialogLabelColor), // Use dynamic color
+                              icon: Icon(Icons.keyboard_arrow_down,
+                                  color: dialogLabelColor), // Use dynamic color
                               onChanged: (int? newValue) {
                                 if (newValue != null) {
-                                  setState(() { // Use setState from StatefulBuilder
+                                  setState(() {
+                                    // Use setState from StatefulBuilder
                                     _selectedStars = newValue;
                                   });
                                 }
@@ -1159,8 +1367,10 @@ class HomeScreenViewState extends State<HomeScreenView>
                                 return DropdownMenuItem<int>(
                                   value: starValue,
                                   child: Row(
-                                    children: List.generate(starValue, (starIndex) {
-                                      return const Icon(Icons.star, color: Colors.amber, size: 24);
+                                    children:
+                                        List.generate(starValue, (starIndex) {
+                                      return const Icon(Icons.star,
+                                          color: Colors.amber, size: 24);
                                     }),
                                   ),
                                 );
@@ -1173,19 +1383,27 @@ class HomeScreenViewState extends State<HomeScreenView>
                         TextFormField(
                           controller: _reviewController,
                           maxLines: 4,
-                          style: TextStyle(fontFamily: 'Times New Roman', color: dialogTextColor), // Text color in field
+                          style: TextStyle(
+                              fontFamily: 'Times New Roman',
+                              color: dialogTextColor), // Text color in field
                           decoration: InputDecoration(
                             labelText: 'Review',
-                            labelStyle: TextStyle(fontFamily: 'Times New Roman', color: dialogLabelColor), // Use dynamic color
+                            labelStyle: TextStyle(
+                                fontFamily: 'Times New Roman',
+                                color: dialogLabelColor), // Use dynamic color
                             filled: true,
-                            fillColor: dialogFieldFillColor, // Use dynamic color
+                            fillColor:
+                                dialogFieldFillColor, // Use dynamic color
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                               borderSide: BorderSide.none, // No border
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: purpleColor, width: 2), // Purple border on focus, now dynamic
+                              borderSide: BorderSide(
+                                  color: purpleColor,
+                                  width:
+                                      2), // Purple border on focus, now dynamic
                             ),
                           ),
                           validator: (value) {
@@ -1202,23 +1420,29 @@ class HomeScreenViewState extends State<HomeScreenView>
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             gradient: LinearGradient(
-                              colors: [purpleColor, purpleColor.withOpacity(0.7)], // Purple gradient, now dynamic
+                              colors: [
+                                purpleColor,
+                                purpleColor.withOpacity(0.7)
+                              ], // Purple gradient, now dynamic
                               begin: Alignment.centerLeft,
                               end: Alignment.centerRight,
                             ),
                           ),
                           child: ElevatedButton(
                             onPressed: () {
-                              if (_formKey.currentState!.validate()) { // Validate the form
+                              if (_formKey.currentState!.validate()) {
+                                // Validate the form
                                 // All fields are valid, proceed with submission
                                 print('Full Name: ${_fullNameController.text}');
                                 print('Stars: $_selectedStars');
                                 print('Review: ${_reviewController.text}');
-                                Navigator.of(context).pop(); // Close the dialog after submission
+                                Navigator.of(context)
+                                    .pop(); // Close the dialog after submission
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent, // Make button transparent to show gradient
+                              backgroundColor: Colors
+                                  .transparent, // Make button transparent to show gradient
                               shadowColor: Colors.transparent, // No shadow
                               padding: const EdgeInsets.symmetric(vertical: 15),
                               shape: RoundedRectangleBorder(
@@ -1228,7 +1452,8 @@ class HomeScreenViewState extends State<HomeScreenView>
                             child: const Text(
                               'Submit',
                               style: TextStyle(
-                                fontFamily: 'Times New Roman', // Applied font family
+                                fontFamily:
+                                    'Times New Roman', // Applied font family
                                 color: Colors.white,
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -1248,7 +1473,12 @@ class HomeScreenViewState extends State<HomeScreenView>
     );
   }
 
-  Widget _buildNewsAndEventsSection(Color backgroundColor, Color cardBackgroundColor, Color textColor, Color secondaryTextColor, Color purpleColor) {
+  Widget buildNewsAndEventsSection(
+      Color backgroundColor,
+      Color cardBackgroundColor,
+      Color textColor,
+      Color secondaryTextColor,
+      Color purpleColor) {
     return Container(
       color: backgroundColor, // Use dynamic color
       padding: const EdgeInsets.all(32.0),
@@ -1267,15 +1497,19 @@ class HomeScreenViewState extends State<HomeScreenView>
           ),
           const SizedBox(height: 24),
           SizedBox(
-            height: 450, // Increased height to accommodate the combined card content
+            height:
+                450, // Increased height to accommodate the combined card content
             child: PageView.builder(
-              controller: _newsEventsPageController, // Use the dedicated controller
+              controller:
+                  _newsEventsPageController, // Use the dedicated controller
               itemCount: newsEvents.length,
               itemBuilder: (context, index) {
                 final item = newsEvents[index];
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0), // Add padding between carousel items
-                  child: _buildNewsEventCard( // Now directly returning the combined card
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0), // Add padding between carousel items
+                  child: buildNewsEventCard(
+                    // Now directly returning the combined card
                     item['image']!,
                     item['title']!,
                     item['date']!,
@@ -1292,7 +1526,8 @@ class HomeScreenViewState extends State<HomeScreenView>
           const SizedBox(height: 20),
           Center(
             child: SmoothPageIndicator(
-              controller: _newsEventsPageController, // Use the dedicated controller
+              controller:
+                  _newsEventsPageController, // Use the dedicated controller
               count: newsEvents.length,
               effect: WormEffect(
                 dotHeight: 8,
@@ -1306,7 +1541,15 @@ class HomeScreenViewState extends State<HomeScreenView>
     );
   }
 
-  Widget _buildNewsEventCard(String imagePath, String title, String date, String description, Color cardBackgroundColor, Color textColor, Color secondaryTextColor, Color purpleColor) {
+  Widget buildNewsEventCard(
+      String imagePath,
+      String title,
+      String date,
+      String description,
+      Color cardBackgroundColor,
+      Color textColor,
+      Color secondaryTextColor,
+      Color purpleColor) {
     return Container(
       padding: const EdgeInsets.all(16), // Padding inside the card
       decoration: BoxDecoration(
@@ -1325,7 +1568,8 @@ class HomeScreenViewState extends State<HomeScreenView>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(8), // Slightly smaller radius for image within card
+            borderRadius: BorderRadius.circular(
+                8), // Slightly smaller radius for image within card
             child: Image.asset(
               imagePath,
               fit: BoxFit.cover,
@@ -1336,7 +1580,8 @@ class HomeScreenViewState extends State<HomeScreenView>
                   height: 180,
                   color: Colors.grey[300],
                   child: const Center(
-                    child: Text('Image not found', style: TextStyle(color: Colors.black54)),
+                    child: Text('Image not found',
+                        style: TextStyle(color: Colors.black54)),
                   ),
                 );
               },
@@ -1362,7 +1607,8 @@ class HomeScreenViewState extends State<HomeScreenView>
             ),
           ),
           const SizedBox(height: 12),
-          Expanded( // Use Expanded to allow text to take available space and prevent overflow
+          Expanded(
+            // Use Expanded to allow text to take available space and prevent overflow
             child: Text(
               description,
               style: TextStyle(
@@ -1384,8 +1630,10 @@ class HomeScreenViewState extends State<HomeScreenView>
                 print('Read More for: $title');
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: purpleColor, // Purple button color, now dynamic
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                backgroundColor:
+                    purpleColor, // Purple button color, now dynamic
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -1406,7 +1654,8 @@ class HomeScreenViewState extends State<HomeScreenView>
     );
   }
 
-  Widget _buildWhatOurClientsSaySection(Color backgroundColor, Color cardBackgroundColor, Color textColor, Color secondaryTextColor) {
+  Widget buildWhatOurClientsSaySection(Color backgroundColor,
+      Color cardBackgroundColor, Color textColor, Color secondaryTextColor) {
     return Container(
       color: backgroundColor, // Use dynamic color
       padding: const EdgeInsets.all(32.0),
@@ -1433,7 +1682,11 @@ class HomeScreenViewState extends State<HomeScreenView>
                 final testimonial = testimonials[index];
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: _buildSmallTestimonialCard(testimonial, cardBackgroundColor, textColor, secondaryTextColor), // Pass colors
+                  child: buildSmallTestimonialCard(
+                      testimonial,
+                      cardBackgroundColor,
+                      textColor,
+                      secondaryTextColor), // Pass colors
                 );
               },
             ),
@@ -1446,7 +1699,9 @@ class HomeScreenViewState extends State<HomeScreenView>
               effect: WormEffect(
                 dotHeight: 8,
                 dotWidth: 8,
-                activeDotColor: _isDarkMode ? Colors.amber : Colors.black54, // Adjust dot color
+                activeDotColor: widget.isDarkMode
+                    ? Colors.amber
+                    : Colors.black54, // Adjust dot color
               ),
             ),
           ),
@@ -1455,7 +1710,8 @@ class HomeScreenViewState extends State<HomeScreenView>
     );
   }
 
-  Widget _buildSmallTestimonialCard(Testimonial testimonial, Color cardBackgroundColor, Color textColor, Color secondaryTextColor) {
+  Widget buildSmallTestimonialCard(Testimonial testimonial,
+      Color cardBackgroundColor, Color textColor, Color secondaryTextColor) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -1471,8 +1727,10 @@ class HomeScreenViewState extends State<HomeScreenView>
         ],
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center, // Center content vertically
-        crossAxisAlignment: CrossAxisAlignment.center, // Center content horizontally
+        mainAxisAlignment:
+            MainAxisAlignment.center, // Center content vertically
+        crossAxisAlignment:
+            CrossAxisAlignment.center, // Center content horizontally
         children: [
           Text(
             testimonial.clientName,
@@ -1513,9 +1771,12 @@ class HomeScreenViewState extends State<HomeScreenView>
     );
   }
 
-  Widget _buildDetailedClientTestimonialSection(Color cardBackgroundColor, Color textColor, Color secondaryTextColor) {
+  Widget buildDetailedClientTestimonialSection(
+      Color cardBackgroundColor, Color textColor, Color secondaryTextColor) {
     return Container(
-      color: _isDarkMode ? Colors.grey[900] : Colors.white, // Use dynamic color
+      color: widget.isDarkMode
+          ? Colors.grey[900]
+          : Colors.white, // Use dynamic color
       padding: const EdgeInsets.all(32.0),
       child: Column(
         children: [
@@ -1523,12 +1784,17 @@ class HomeScreenViewState extends State<HomeScreenView>
             height: 400, // Increased height for the large testimonial card
             child: PageView.builder(
               controller: _largeTestimonialPageController,
-              itemCount: testimonials.length, // Display all testimonials in this carousel
+              itemCount: testimonials
+                  .length, // Display all testimonials in this carousel
               itemBuilder: (context, index) {
                 final testimonial = testimonials[index];
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: _buildLargeTestimonialCard(testimonial, cardBackgroundColor, textColor, secondaryTextColor), // Pass colors
+                  child: buildLargeTestimonialCard(
+                      testimonial,
+                      cardBackgroundColor,
+                      textColor,
+                      secondaryTextColor), // Pass colors
                 );
               },
             ),
@@ -1541,7 +1807,9 @@ class HomeScreenViewState extends State<HomeScreenView>
               effect: WormEffect(
                 dotHeight: 8,
                 dotWidth: 8,
-                activeDotColor: _isDarkMode ? Colors.amber : Colors.black54, // Adjust dot color
+                activeDotColor: widget.isDarkMode
+                    ? Colors.amber
+                    : Colors.black54, // Adjust dot color
               ),
             ),
           ),
@@ -1550,7 +1818,8 @@ class HomeScreenViewState extends State<HomeScreenView>
     );
   }
 
-  Widget _buildLargeTestimonialCard(Testimonial testimonial, Color cardBackgroundColor, Color textColor, Color secondaryTextColor) {
+  Widget buildLargeTestimonialCard(Testimonial testimonial,
+      Color cardBackgroundColor, Color textColor, Color secondaryTextColor) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -1564,7 +1833,8 @@ class HomeScreenViewState extends State<HomeScreenView>
             children: [
               if (testimonial.clientImagePath != null)
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(30), // Adjusted for smaller radius
+                  borderRadius:
+                      BorderRadius.circular(30), // Adjusted for smaller radius
                   child: Image.asset(
                     testimonial.clientImagePath!,
                     fit: BoxFit.cover,
@@ -1574,13 +1844,15 @@ class HomeScreenViewState extends State<HomeScreenView>
                       // Fallback to CircleAvatar with first letter if image fails to load
                       return CircleAvatar(
                         radius: 20, // Half of height/width for perfect circle
-                        backgroundColor: Colors.blue, // Example background color
+                        backgroundColor:
+                            Colors.blue, // Example background color
                         child: Text(
                           testimonial.clientName.isNotEmpty
                               ? testimonial.clientName[0].toUpperCase()
                               : '', // Get first letter
                           style: const TextStyle(
-                            fontFamily: 'Times New Roman', // Applied font family
+                            fontFamily:
+                                'Times New Roman', // Applied font family
                             color: Colors.white,
                             fontSize: 24, // Adjusted font size
                             fontWeight: FontWeight.bold,
@@ -1607,7 +1879,8 @@ class HomeScreenViewState extends State<HomeScreenView>
                   ),
                 ),
               const SizedBox(width: 16),
-              Expanded( // Wrap client name with Expanded to prevent overflow
+              Expanded(
+                // Wrap client name with Expanded to prevent overflow
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1644,7 +1917,9 @@ class HomeScreenViewState extends State<HomeScreenView>
             }),
           ),
           const SizedBox(height: 16),
-          Icon(Icons.format_quote, color: secondaryTextColor, size: 30), // Quote icon, use dynamic color
+          Icon(Icons.format_quote,
+              color: secondaryTextColor,
+              size: 30), // Quote icon, use dynamic color
           const SizedBox(height: 8),
           Expanded(
             child: Text(
@@ -1662,41 +1937,5 @@ class HomeScreenViewState extends State<HomeScreenView>
         ],
       ),
     );
-  }
-
-  //buttomnavigationBar behaviour
-  Widget _buildBodyContent(int index, Color lightBackground, Color textColor, Color secondaryTextColor, Color cardBackgroundColor, Color whiteBackground, Color darkModeBannerColor) {
-    switch (index) {
-      case 0:
-        return SingleChildScrollView( // Added SingleChildScrollView here for the home content
-          child: Column(
-            children: [
-              _buildWelcomeSectionWithCarousel(lightBackground, textColor, secondaryTextColor),
-              const SizedBox(height: 20),
-              _buildTransformingDentalHealthSection(whiteBackground, textColor, secondaryTextColor, darkModeBannerColor),
-              const SizedBox(height: 20),
-              _buildHealthServicesSection(lightBackground, textColor, secondaryTextColor, darkModeBannerColor),
-              const SizedBox(height: 20),
-              _buildOurTeamSection(whiteBackground, textColor, secondaryTextColor, darkModeBannerColor),
-              const SizedBox(height: 20),
-              _buildShareReviewButton(lightBackground, darkModeBannerColor),
-              const SizedBox(height: 20),
-              _buildNewsAndEventsSection(whiteBackground, cardBackgroundColor, textColor, secondaryTextColor, darkModeBannerColor),
-              const SizedBox(height: 20),
-              _buildWhatOurClientsSaySection(lightBackground, whiteBackground, textColor, secondaryTextColor),
-              const SizedBox(height: 20),
-              _buildDetailedClientTestimonialSection(cardBackgroundColor, textColor, secondaryTextColor),
-            ],
-          ),
-        );
-      case 1:
-        return EventsPage(isDarkMode: _isDarkMode);
-      case 2: // Awareness tab
-        return AwarenessPage(isDarkMode: _isDarkMode); // Display the AwarenessPage
-      case 3: // Contact tab
-        return ContactScreen(isDarkMode: _isDarkMode); // Display the ContactScreen
-      default:
-        return const SizedBox.shrink();
-    }
   }
 }

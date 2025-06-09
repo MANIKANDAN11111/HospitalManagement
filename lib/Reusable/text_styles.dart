@@ -60,7 +60,7 @@ class MyTextStyle {
     return TextStyle(
       fontFamily: "Poppins",
       color: color,
-      fontSize: 32, // Corrected from 32 (was correct)
+      fontSize: 32,
       fontStyle: fontStyle ?? FontStyle.normal,
       fontWeight: weight ?? FontWeight.w600,
     );
