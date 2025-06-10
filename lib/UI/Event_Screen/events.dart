@@ -102,11 +102,8 @@ class _EventsPageViewState extends State<EventsPageView> {
               const SizedBox(width: 10),
               Text(
                 'PAUL DENTAL CARE',
-                style: TextStyle(
-                  fontFamily: 'Times New Roman',
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                style:MyTextStyle.f20(
+                    whiteColor,
                 ),
               ),
             ],
@@ -193,34 +190,31 @@ class _EventsPageViewState extends State<EventsPageView> {
                                   const SizedBox(height: 12),
                                   Text(
                                     '${e.title}',
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: titleColor),
+                                    style:MyTextStyle.f20(
+                                        titleColor,
+                                    ),
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
                                     'Date: ${e.eventDate}',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: textColor),
+                                    style:MyTextStyle.f16(
+                                        textColor,
+                                    ),
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
                                     "${e.description}",
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        color: descriptionColor),
+                                    style:MyTextStyle.f14(
+                                        descriptionColor
+                                    ),
                                   ),
                                   if (index != 1) ...[
                                     const SizedBox(height: 12),
                                     Text(
                                       'Event Images',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: textColor),
+                                      style:MyTextStyle.f16(
+                                          textColor,
+                                      ),
                                     ),
                                     const SizedBox(height: 10),
                                     Stack(

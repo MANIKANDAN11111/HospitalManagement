@@ -103,22 +103,16 @@ class ContactScreenViewState extends State<ContactScreenView>
                     children: [
                       Text(
                         'Get in Touch',
-                        style: TextStyle(
-                          fontFamily: 'Times New Roman',
-                          color: textColor,
-                          fontSize: 36,
-                          fontWeight: FontWeight.w800,
+                        style:MyTextStyle.f36(
+                          textColor,
                         ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 20),
                       Text(
                         'We would love to hear from you. Feel free to reach out through any of the following channels.',
-                        style: TextStyle(
-                          fontFamily: 'Times New Roman',
-                          color: secondaryTextColor,
-                          fontSize: 16,
-                          height: 1.5,
+                        style:MyTextStyle.f16(
+                          secondaryTextColor,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -253,27 +247,24 @@ class ContactScreenViewState extends State<ContactScreenView>
                 const SizedBox(width: 10),
                 Text(
                   'PAUL DENTAL CARE',
-                  style: TextStyle(
-                    fontFamily: 'Times New Roman', // Applied font family
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white, // Use dynamic color
+                  style:MyTextStyle.f20(
+                    whiteColor
                   ),
                 ),
               ],
             ),
             actions: [
-              IconButton(
-                icon: Icon(
-                  widget.isDarkMode ? Icons.light_mode : Icons.dark_mode,
-                  color: Colors.white, // Always white for visibility
-                ),
-                onPressed: () {
-                  setState(() {
-                    //widget.isDarkMode = !widget.isDarkMode; // Toggle dark mode
-                  });
-                },
-              ),
+              // IconButton(
+              //   icon: Icon(
+              //     widget.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+              //     color: Colors.white, // Always white for visibility
+              //   ),
+              //   onPressed: () {
+              //     setState(() {
+              //       // widget.isDarkMode = !widget.isDarkMode;
+              //     });
+              //   },
+              // ),
             ],
           ),
           body: BlocBuilder<ContactDentalBloc, dynamic>(
