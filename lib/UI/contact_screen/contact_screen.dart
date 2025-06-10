@@ -35,9 +35,9 @@ class ContactScreenView extends StatefulWidget {
   ContactScreenViewState createState() => ContactScreenViewState();
 }
 
-class ContactScreenViewState extends State<ContactScreenView> {
+class ContactScreenViewState extends State<ContactScreenView>
+{
   GetContactModel getContactModel = GetContactModel();
-
   String? errorMessage;
   bool contactLoad = false;
   @override
@@ -55,10 +55,8 @@ class ContactScreenViewState extends State<ContactScreenView> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    final Color scaffoldBackgroundColor =
-        widget.isDarkMode ? Colors.grey[900]! : whiteColor;
-    final Color appBarBackgroundColor =
-        widget.isDarkMode ? const Color(0xFF424242) : appPrimaryColor;
+    final Color scaffoldBackgroundColor = widget.isDarkMode ? greyColor: whiteColor;
+    final Color appBarBackgroundColor = widget.isDarkMode ? appBarBackgroundColordark : appPrimaryColor;
 
     final width = MediaQuery.of(context).size.width;
 

@@ -3,9 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:simple/Bloc/demo/demo_bloc.dart';
 import 'package:simple/Reusable/color.dart';
 import 'package:simple/Reusable/image.dart';
+import 'package:simple/Reusable/text_styles.dart';
+import 'package:simple/Alertbox/snackBarAlert.dart';
+import 'package:simple/Bloc/Contact/contact_bloc.dart';
 import 'package:simple/UI/Videoplayer/videoItems.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:simple/UI/Videoplayer/video_card.dart';
 import 'package:simple/UI/buttomnavigationbar/buttomnavigation.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:simple/ModelClass/Awareness/getAwarenessModel.dart';
+import 'package:simple/Api/apiprovider.dart';
 
 class AwarenessPage extends StatelessWidget {
   final bool isDarkMode;
@@ -13,14 +20,13 @@ class AwarenessPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => DemoBloc(),
-      child: AwarenessPageView(
-        isDarkMode: isDarkMode,
-      ),
+    return BlocProvider<ContactDentalBloc>(
+      create: (context) => ContactDentalBloc(),
+      child: AwarenessPageView(isDarkMode: isDarkMode),
     );
   }
 }
+
 
 class AwarenessPageView extends StatefulWidget {
   final bool isDarkMode;
@@ -35,17 +41,32 @@ class AwarenessPageView extends StatefulWidget {
 
 class AwarenessPageViewState extends State<AwarenessPageView> {
   //PutFeedBackModel putFeedBackModel = PutFeedBackModel();
-  static const _videos = [
-    VideoItem(id: 'I7-G4rrQyx0', title: 'Awarez', date: '02-04-2025'),
-    VideoItem(id: 'Z1iHVxOCCkA', title: 'Precautions', date: '05-04-2025'),
-    VideoItem(id: 'GLeUJhybJQw', title: 'Dental', date: '02-06-2025'),
-  ];
-
+  GetAwarenessModel getAwarenessModel = GetAwarenessModel();
   String? errorMessage;
+  bool awarenessLoad = false;
+  //  final _videos = [
+  //   VideoItem(id: 'I7-G4rrQyx0', title: '${getAwarenessModel.data!.awareness!.title}', date: '${getAwarenessModel.data!.awareness!.event_date}'),
+  //   const VideoItem(id: 'Z1iHVxOCCkA', title: 'Precautions', date: '05-04-2025'),
+  //   const VideoItem(id: 'GLeUJhybJQw', title: 'Dental', date: '02-06-2025'),
+  // ];
+  List<VideoItem> get videosFromModel {
+    if (getAwarenessModel?.data?.awareness == null) return [];
+    return getAwarenessModel!.data!.awareness!.map((awareness) {
+      final videoId = YoutubePlayer.convertUrlToId(awareness.url ?? '') ?? '';
+      return VideoItem(
+        id: videoId,
+        title: awareness.title ?? '',
+        date: awareness.eventDate ?? '',
+      );
+    }).toList();
+  }
+
   bool feedLoad = false;
   @override
   void initState() {
     super.initState();
+    context.read<ContactDentalBloc>().add(AwarenessDental());
+    awarenessLoad = true;
   }
 
   @override
@@ -75,7 +96,20 @@ class AwarenessPageViewState extends State<AwarenessPageView> {
         widget.isDarkMode ? Colors.amber : Colors.pink[900]!;
 
     Widget mainContainer() {
-      return Container(
+      return awarenessLoad
+          ? const SpinKitChasingDots(color: appPrimaryColor, size: 30)
+          : getAwarenessModel.data == null
+          ? Container(
+          padding: EdgeInsets.only(
+              top: MediaQuery.of(context).size.height * 0.02),
+          alignment: Alignment.center,
+          child: Text(
+            "No Contacts found !!!",
+            style: MyTextStyle.f16(
+              appPrimaryColor,
+              weight: FontWeight.w500,
+            ),
+          ),):Container(
         color: scaffoldBackgroundColor,
         child: CustomScrollView(
           slivers: [
@@ -86,7 +120,7 @@ class AwarenessPageViewState extends State<AwarenessPageView> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: Image.asset(
-                    'assets/image/awarenessimage.jpg', // Ensure this image path is correct
+                    'assets/image/awarenessimage.jpg',
                     height: MediaQuery.of(context).size.height * .28,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -109,10 +143,10 @@ class AwarenessPageViewState extends State<AwarenessPageView> {
               sliver: SliverGrid(
                 delegate: SliverChildBuilderDelegate(
                   (context, i) => VideoCard(
-                      item: _videos[i],
+                      item: videosFromModel[i],
                       isDarkMode:
                           widget.isDarkMode), // Pass isDarkMode to video card
-                  childCount: _videos.length,
+                  childCount: videosFromModel.length,
                 ),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: columns,
@@ -123,9 +157,10 @@ class AwarenessPageViewState extends State<AwarenessPageView> {
               ),
             ),
           ],
-        ),
+        )
       );
     }
+
 
     return WillPopScope(
       onWillPop: () async {
@@ -168,46 +203,40 @@ class AwarenessPageViewState extends State<AwarenessPageView> {
               ),
             ],
           ),
-          body: BlocBuilder<DemoBloc, dynamic>(
+          body: BlocBuilder<ContactDentalBloc, dynamic>(
             buildWhen: ((previous, current) {
               debugPrint("current:$current");
-              // if (current is PutFeedBackModel) {
-              //   putFeedBackModel = current;
-              //   if (current.errorResponse != null) {
-              //     if (current.errorResponse!.errors != null &&
-              //         current.errorResponse!.errors!.isNotEmpty) {
-              //       errorMessage = current.errorResponse!.errors![0].message ??
-              //           "Something went wrong";
-              //     } else {
-              //       errorMessage = "Something went wrong";
-              //     }
-              //     showToast("$errorMessage", context, color: false);
-              //     setState(() {
-              //       feedLoad = false;
-              //     });
-              //   } else if (putFeedBackModel.success == true) {
-              //     if (putFeedBackModel.data?.status == true) {
-              //       debugPrint("putFeedBackModel:${putFeedBackModel.message}");
-              //       setState(() {
-              //         showToast("${putFeedBackModel.message}", context,
-              //             color: true);
-              //         feedLoad = false;
-              //       });
-              //       Navigator.of(context).pushReplacement(MaterialPageRoute(
-              //           builder: (context) => const DashboardScreen(
-              //             selectTab: 3,
-              //           )));
-              //     } else if (putFeedBackModel.data?.status == false) {
-              //       debugPrint("putFeedBackModel:${putFeedBackModel.message}");
-              //       setState(() {
-              //         showToast("${putFeedBackModel.message}", context,
-              //             color: false);
-              //         feedLoad = false;
-              //       });
-              //     }
-              //   }
-              //   return true;
-              // }
+              if (current is GetAwarenessModel) {
+                getAwarenessModel = current;
+                if (current.errorResponse != null) {
+                  if (current.errorResponse!.errors != null &&
+                      current.errorResponse!.errors!.isNotEmpty) {
+                    errorMessage = current.errorResponse!.errors![0].message ??
+                        "Something went wrong";
+                  } else {
+                    errorMessage = "Something went wrong";
+                  }
+                  showToast("$errorMessage", context, color: false);
+                  setState(() {
+                    awarenessLoad = false;
+                  });
+                } else if (getAwarenessModel.success == true) {
+                  if (getAwarenessModel.data?.status == true) {
+                    debugPrint("getEventModel:${getAwarenessModel.message}");
+                    setState(() {
+                      awarenessLoad = false;
+                    });
+                  } else if (getAwarenessModel.data?.status == false) {
+                    debugPrint("getEventModel:${getAwarenessModel.message}");
+                    setState(() {
+                      showToast("${getAwarenessModel.message}", context,
+                          color: false);
+                      awarenessLoad = false;
+                    });
+                  }
+                }
+                return true;
+              }
               return false;
             }),
             builder: (context, dynamic) {

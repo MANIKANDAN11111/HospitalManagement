@@ -8,12 +8,11 @@ const Color appGreyColor = Color(0xFFE1E1E1);
 const Color appLightBlueColor = Color(0XFFf0f3f5);
 const Color appGreyTextColor = Color(0xFF989898);
 const Color appHomeTextColor = Color(0xFF164B9A);
-// const Color appHomeDarkGreenColor = Color(0xFF00707E); // Example of a commented-out alternative home text color
+// const Color appHomeDarkGreenColor = Color(0xFF00707E);
 const Color appDividerColor = Color(0xFFCECECE);
 const Color appNotificationColor = Color(0xFFD9EFF2);
 const Color appGreenColor = Color(0xFF147338);
 
-// Standard Material Colors (aliased for consistency or if custom shades are desired later)
 const Color orangeColor = Colors.orange;
 const Color blackColor = Colors.black;
 const Color blueColor = Colors.blue;
@@ -26,4 +25,5 @@ const Color purpleColor=Colors.purple;
 const Color pinkColor = Colors.pink; // Added pinkColor as it was used in your home_screen.dart
 
 // Example of defining a paragraph color if needed
-const Color paragraphColor = Color(0xFF333333); // Corrected with a default grey shade
+const Color paragraphColor = Color(0xFF333333);
+const Color appBarBackgroundColordark=const Color(0xFF424242);

@@ -1,11 +1,14 @@
 import 'dart:convert';
-
+// import 'package:simple/ModelClass/Home/getHomeModel.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:simple/Bloc/Response/errorResponse.dart';
+import 'package:simple/ModelClass/Awareness/getAwarenessModel.dart';
 import 'package:simple/ModelClass/Contact/getContactModel.dart';
 import 'package:simple/ModelClass/Events/getEventModel.dart';
+import 'package:simple/ModelClass/Home/getHomeModel.dart';
 import 'package:simple/Reusable/constant.dart';
+
 
 /// All API Integration in ApiProvider
 class ApiProvider {
@@ -49,6 +52,66 @@ class ApiProvider {
     }
   }
 
+  /// Awareness page API Integration
+  Future<GetAwarenessModel> getAwarenessAPI() async {
+    try {
+      var dio = Dio();
+      var response = await dio.request(
+        '${Constants.baseUrl}awareness',
+        options: Options(
+          method: 'GET',
+        ),
+      );
+      if (response.statusCode == 200) {
+        debugPrint("API Response: ${json.encode(response.data)}");
+        GetAwarenessModel getAwarenessModel =
+        GetAwarenessModel.fromJson(response.data);
+        return getAwarenessModel;
+      } else {
+        debugPrint(
+            "ErrorAPIResponse: ${response.statusCode} - ${response.statusMessage}");
+        return GetAwarenessModel()
+          ..errorResponse =
+          ErrorResponse(message: "Error: ${response.statusCode}");
+      }
+    } catch (error) {
+      debugPrint("ErrorCatch: $error");
+      GetAwarenessModel getAwarenessResponse = GetAwarenessModel();
+      getAwarenessResponse.errorResponse = handleError(error);
+      return getAwarenessResponse;
+    }
+  }
+
+  /// Home page API Integration
+  Future<GetHomeModel> getHomeAPI() async {
+    try {
+      var dio = Dio();
+      var response = await dio.request(
+        '${Constants.baseUrl}home',
+        options: Options(
+          method: 'GET',
+        ),
+      );
+      if (response.statusCode == 200) {
+        debugPrint("API Response: ${json.encode(response.data)}");
+        GetHomeModel getHomeModel =
+        GetHomeModel.fromJson(response.data);
+        return getHomeModel;
+      } else {
+        debugPrint(
+            "ErrorAPIResponse: ${response.statusCode} - ${response.statusMessage}");
+        return GetHomeModel()
+          ..errorResponse =
+          ErrorResponse(message: "Error: ${response.statusCode}");
+      }
+    } catch (error) {
+      debugPrint("ErrorCatch: $error");
+      GetHomeModel getHomeResponse = GetHomeModel();
+      getHomeResponse.errorResponse = handleError(error);
+      return getHomeResponse;
+    }
+  }
+
   /// Event page API Integration
   Future<GetEventModel> getEventAPI() async {
     try {
@@ -75,6 +138,8 @@ class ApiProvider {
       return getEventResponse;
     }
   }
+
+
 
   /// handle Error Response
   ErrorResponse handleError(Object error) {
@@ -131,3 +196,4 @@ class ApiProvider {
     return errorResponse;
   }
 }
+

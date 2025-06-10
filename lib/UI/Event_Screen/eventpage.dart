@@ -74,7 +74,8 @@ class _EventsPageState extends State<EventsPage> {
     // Returning only the SingleChildScrollView as the body content
     return WillPopScope(
       onWillPop: () async {
-        if (ModalRoute.of(context)?.isCurrent == true) {
+        if (ModalRoute.of(context)?.isCurrent == true)
+        {
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => const DashboardScreen()),
             (route) => false,
